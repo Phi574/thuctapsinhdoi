@@ -4,8 +4,8 @@ $action = $_GET['action'] ?? 'login';
 
 switch ($action) {
 
-    // ===== ĐĂNG NHẬP / ĐĂNG XUẤT =====
     case 'login':
+        // NẾU submit form → xử lý login
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require_once '../controllers/auth.php';
         } else {
@@ -13,66 +13,81 @@ switch ($action) {
         }
         break;
 
+    case 'admin_dashboard':
+        require_once '../views/admin/dashboard.php';
+        break;
+    
+
+
+    case 'user_dashboard':
+        require_once __DIR__ . '/../controllers/user_list.php';
+        break;
+    case 'dashboard':
+        require_once __DIR__ . '/../controllers/dashboard.php';
+        break;
+
     case 'logout':
         require_once '../controllers/auth.php';
         break;
 
-    // ===== DASHBOARD =====
-    case 'dashboard':
-    case 'admin_dashboard':
-    case 'home': // Gộp chung về dashboard
-        require_once '../controllers/dashboard.php';
+
+    case 'baidang_edit':
+        require_once '../controllers/baidang_edit.php';
         break;
 
-    // ===== QUẢN LÝ BÀI ĐĂNG (CHUNG) =====
-    case 'baidang': // Danh sách
+    case 'baidang_delete':
+        require_once '../controllers/baidang_delete.php';
+        break;
+
+
+    case 'baidang':
+    case 'delete_baidang':
         require_once '../controllers/baidang.php';
         break;
 
-    case 'baidang_add': // Thêm mới
+    case 'baidang_add':
         require_once '../controllers/baidang_add.php';
         break;
-
-    case 'baidang_delete': // Xóa
-    case 'delete_baidang':
-        require_once '../controllers/baidang_delete.php';
-        break;
     
-    case 'baidang_duyet': // Duyệt (nếu có)
+    case 'baidang_duyet':
         require_once '../controllers/baidang_duyet.php';
         break;
 
-    // ===== NHÀ PHỐ (Xử lý chi tiết/sửa) =====
-    case 'nha_detail':
-        require_once '../controllers/NhaController.php';
-        $controller = new NhaController();
-        $controller->detail();
+    
+    case 'gui_tuvan':
+        require_once '../controllers/gui_tuvan.php';
         break;
 
-    case 'nha_edit':
-        require_once '../controllers/NhaController.php';
-        $controller = new NhaController();
-        $controller->edit();
-        break;
+        /* ===== NHÀ ===== */
+case 'nha_detail':
+    require_once '../controllers/NhaController.php';
+    $controller = new NhaController();
+    $controller->detail();
+    break;
 
-    // ===== ĐẤT NỀN (Xử lý chi tiết/sửa) =====
-    case 'dat_detail':
-        require_once '../controllers/DatController.php';
-        $controller = new DatController();
-        $controller->detail();
-        break;
+case 'nha_edit':
+    require_once '../controllers/NhaController.php';
+    $controller = new NhaController();
+    $controller->edit();
+    break;
 
-    case 'dat_edit':
-        require_once '../controllers/DatController.php';
-        $controller = new DatController();
-        $controller->edit();
-        break;
+/* ===== ĐẤT ===== */
+case 'dat_detail':
+    require_once '../controllers/DatController.php';
+    $controller = new DatController();
+    $controller->detail();
+    break;
 
-    // ===== TƯ VẤN KHÁCH HÀNG =====
+case 'dat_edit':
+    require_once '../controllers/DatController.php';
+    $controller = new DatController();
+    $controller->edit();
+    break;
+
+
     case 'tuvan':
-    case 'tuvan_list':
-        require_once '../controllers/tuvan_list.php';
-        break;
+    require_once '../controllers/tuvan_list.php';
+    break;
 
     case 'tuvan_detail':
         require_once __DIR__ . '/../controllers/tuvan_detail.php';
@@ -81,31 +96,62 @@ switch ($action) {
     case 'tuvan_update':
         require_once '../controllers/tuvan_update.php';
         break;
+
+    case 'dashboard':
+        require_once '../controllers/dashboard.php';
+        break;
+
+    // ===== USER =====
+case 'user_list':
+    require_once '../controllers/user_list.php';
+    break;
+
+case 'user_trangthai':
+    require_once '../controllers/user_trangthai.php';
+    break;
+
+case 'user_role':
+    require_once '../controllers/user_role.php';
+    break;
     
-    case 'gui_tuvan':
-        require_once '../controllers/gui_tuvan.php';
+
+case 'user_update':
+    require_once '../controllers/user_update.php';
+    break;
+case 'detail':
+    require_once '../controllers/baidang_detail.php';
+    break;
+
+
+
+case 'baidang':
+    require_once '../controllers/baidang.php';
+    break;
+
+    
+
+case 'dashboard':
+    require_once '../controllers/dashboard.php';
+    break;
+
+        case 'home':
+        require_once '../controllers/dashboard.php';
         break;
 
-    // ===== QUẢN LÝ USER =====
-    case 'user_list':
-    case 'user_dashboard':
-        require_once '../controllers/user_list.php';
+    case 'baidang':
+        require_once '../controllers/baidang_list.php';
         break;
 
-    case 'user_trangthai':
-        require_once '../controllers/user_trangthai.php';
+    case 'detail':
+        require_once '../controllers/baidang_detail.php';
         break;
 
-    case 'user_role':
-        require_once '../controllers/user_role.php';
+    case 'tuvan_list':
+        require_once '../controllers/tuvan_list.php';
         break;
 
-    case 'user_update':
-        require_once '../controllers/user_update.php';
-        break;
-
-    // ===== MẶC ĐỊNH =====
     default:
-        echo "<h1>404 - Không tìm thấy chức năng '$action'</h1>";
+        echo '404';
         break;
+
 }
