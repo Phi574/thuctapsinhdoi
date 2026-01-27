@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../layout/header.php';
 require_once __DIR__ . '/../layout/sidebar.php';
 
-/* BẢO VỆ VIEW */
+/* BẢO VỆ VIEW & XỬ LÝ LOGIC ID LOẠI */
 $nha = array_merge([
     'tieude'   => '',
     'diachi'   => '',
@@ -10,13 +10,18 @@ $nha = array_merge([
     'dientich' => '',
     'mota'     => '',
     'img_1'    => '',
-    'id_loai'  => 1
+    'loai'     => 'nha' // Mặc định
 ], $nha ?? []);
 
-$id_loai = $nha['id_loai'];
+// Tự động xác định ID loại dựa trên chuỗi 'nha' hoặc 'dat'
+$id_loai = ($nha['loai'] === 'dat') ? 2 : 1; 
+if (isset($nha['loai_nha']) && $nha['loai_nha'] == 'Chung cư') {
+    $id_loai = 3;
+}
 ?>
 
 <style>
+/* ... (Giữ nguyên CSS cũ) ... */
 .main-content{margin-left:260px;padding:20px}
 .edit-container{max-width:900px;background:#fff;padding:30px;border-radius:12px;box-shadow:0 5px 25px rgba(0,0,0,.1)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
@@ -50,6 +55,7 @@ $id_loai = $nha['id_loai'];
                     <select name="id_loai">
                         <option value="1" <?= $id_loai == 1 ? 'selected' : '' ?>>🏠 Nhà ở</option>
                         <option value="2" <?= $id_loai == 2 ? 'selected' : '' ?>>🌱 Đất nền</option>
+                        <option value="3" <?= $id_loai == 3 ? 'selected' : '' ?>>🏢 Chung cư</option>
                     </select>
                 </div>
 
@@ -85,16 +91,16 @@ $id_loai = $nha['id_loai'];
                             <div class="current-img-wrapper">
                                 <small>Ảnh hiện tại</small><br>
                                 <img src="public/uploads/<?= htmlspecialchars($nha['img_1']) ?>" 
-                                onerror="this.src='public/uploads/no-image.jpg'">
+                                     onerror="this.src='public/assets/images/no-image.jpg'">
                             </div>
-                            <?php endif; ?>
-                            <div>
-                                <small>Tải ảnh mới (nếu muốn)</small>
-                                <input type="file" name="img_1">
-                            </div>
+                        <?php endif; ?>
+                        <div>
+                            <small>Tải ảnh mới (nếu muốn)</small>
+                            <input type="file" name="img_1">
                         </div>
                     </div>
                 </div>
+            </div>
             <button type="submit" class="btn-update">💾 CẬP NHẬT THAY ĐỔI</button>
         </form>
     </div>

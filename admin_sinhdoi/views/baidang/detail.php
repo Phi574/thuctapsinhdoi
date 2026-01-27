@@ -209,6 +209,7 @@
 </style>
 
 <div class="detail-container">
+<div class="detail-container">
 
     <a href="index.php?action=baidang" class="back-btn">
         ← Quay lại danh sách
