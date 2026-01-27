@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'gia'      => $gia,
         'dientich' => $dientich,
         'mota'     => $mota,
-        'img'      => $img_daidien
+        'img'      => $img_daidien,
         'phong_ngu' => $_POST['phong_ngu'] ?? 0,
         'so_tang'   => $_POST['so_tang'] ?? 0,
         'huong'     => $_POST['huong'] ?? ''
@@ -80,9 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     set_flash('success', 'Đăng bài thành công');
     header("Location: index.php?action=baidang");
     exit;
-}
-
-if (insert_baidang($data)) { // Lưu ý: Mình sẽ dùng hàm chung insert_baidang
+    
+    if (insert_baidang($data)) {
         echo "<script>alert('Thêm bài đăng thành công!'); window.location.href='index.php?action=baidang';</script>";
     } else {
         echo "<script>alert('Lỗi khi thêm bài đăng!');</script>";
