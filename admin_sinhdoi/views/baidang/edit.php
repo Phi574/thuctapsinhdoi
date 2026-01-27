@@ -91,7 +91,7 @@ if (isset($nha['loai_nha']) && $nha['loai_nha'] == 'Chung cư') {
                             <div class="current-img-wrapper">
                                 <small>Ảnh hiện tại</small><br>
                                 <img src="public/uploads/<?= htmlspecialchars($nha['img_1']) ?>" 
-                                     onerror="this.src='public/assets/images/no-image.jpg'">
+                                     onerror="this.src='public/assets/images/demo.jpg'">
                             </div>
                         <?php endif; ?>
                         <div>

@@ -209,7 +209,6 @@
 </style>
 
 <div class="detail-container">
-<div class="detail-container">
 
     <a href="index.php?action=baidang" class="back-btn">
         ← Quay lại danh sách
@@ -219,7 +218,7 @@
     <div class="post-main">
         <img 
             src="public/uploads/<?= htmlspecialchars($nha['img_1'] ?? '') ?>" 
-            onerror="this.src='public/uploads/no-image.jpg'"
+            onerror="this.src='public/uploads/demo.jpg'"
             class="post-image"
             alt="Hình ảnh bất động sản"
         >
