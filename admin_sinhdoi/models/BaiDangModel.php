@@ -19,6 +19,37 @@ function phanloai_exists($id) {
     }
     return false;
 }
+function insert_baidang($data) {
+    global $conn;
+
+    // Escape dữ liệu để tránh lỗi SQL Injection
+    $user_id   = (int)$data['user_id'];
+    $tieude    = mysqli_real_escape_string($conn, $data['tieude']);
+    $diachi    = mysqli_real_escape_string($conn, $data['diachi']);
+    $gia       = (int)$data['gia'];
+    $dientich  = (float)$data['dientich'];
+    $mota      = mysqli_real_escape_string($conn, $data['mota']);
+    $img       = mysqli_real_escape_string($conn, $data['img_1']);
+    
+    // Dữ liệu mới
+    $so_phong  = (int)($data['phong_ngu'] ?? 0);
+    $so_tang   = (int)($data['so_tang'] ?? 0);
+    $huong     = mysqli_real_escape_string($conn, $data['huong'] ?? '');
+
+    // Nếu là NHÀ (id_loai = 1)
+    if ($data['id_loai'] == 1) {
+        $sql = "INSERT INTO batdongsa_nha (user_id, tieude_nha, dia_chi_nha, gia_nha, dientich_nha, mota_nha, img_1, trang_thai, so_phong, so_tang, huong) 
+                VALUES ($user_id, '$tieude', '$diachi', $gia, $dientich, '$mota', '$img', 0, $so_phong, $so_tang, '$huong')";
+    } 
+    // Nếu là ĐẤT (id_loai = 2)
+    else {
+        // Đất thì không cần lưu số phòng, số tầng (hoặc lưu là 0)
+        $sql = "INSERT INTO batdongsan_dat (user_id, tieude_dat, diachi_dat, gia_dat, dientich_dat, mota_dat, img_1, trang_thai, huong) 
+                VALUES ($user_id, '$tieude', '$diachi', $gia, $dientich, '$mota', '$img', 0, '$huong')";
+    }
+
+    return mysqli_query($conn, $sql);
+}
 
 /* =====================================================
    2. THÊM MỚI BÀI ĐĂNG (Xử lý cả 3 loại)
@@ -141,11 +172,46 @@ function get_baidang_by_user($user_id) {
     return mysqli_fetch_all($rs, MYSQLI_ASSOC);
 }
 
-function delete_baidang($id, $loai) {
+function delete_baidang($id) {
     global $conn;
     $id = (int)$id;
-    if ($loai === 'nha') return mysqli_query($conn, "DELETE FROM batdongsa_nha WHERE id_nha = $id");
-    if ($loai === 'dat') return mysqli_query($conn, "DELETE FROM batdongsan_dat WHERE id_dat = $id");
-    return false;
+    
+    $sql1 = "DELETE FROM batdongsa_nha WHERE id_nha = $id";
+    mysqli_query($conn, $sql1);
+    
+    $sql2 = "DELETE FROM batdongsan_dat WHERE id_dat = $id";
+    mysqli_query($conn, $sql2);
+    
+    return mysqli_affected_rows($conn) > 0;
 }
+function update_baidang($id, $data) {
+    global $conn;
+    $id = (int)$id;
+    $old_data = get_baidang_by_id($id);
+    if (!$old_data) return false;
+
+    $tieude   = mysqli_real_escape_string($conn, $data['tieude']);
+    $diachi   = mysqli_real_escape_string($conn, $data['diachi']);
+    $gia      = (int)$data['gia'];
+    $dientich = (float)$data['dientich'];
+    $mota     = mysqli_real_escape_string($conn, $data['mota']);
+    $img      = mysqli_real_escape_string($conn, $data['img']);
+
+    if ($old_data['loai'] == 'nha') {
+        $sql = "UPDATE batdongsa_nha SET 
+                tieude_nha='$tieude', dia_chi_nha='$diachi', 
+                gia_nha=$gia, dientich_nha=$dientich, 
+                mota_nha='$mota', img_1='$img' 
+                WHERE id_nha=$id";
+    } else {
+        $sql = "UPDATE batdongsan_dat SET 
+                tieude_dat='$tieude', diachi_dat='$diachi', 
+                gia_dat=$gia, dientich_dat=$dientich, 
+                mota_dat='$mota', img_1='$img' 
+                WHERE id_dat=$id";
+    }
+
+    return mysqli_query($conn, $sql);
+}
+
 ?>

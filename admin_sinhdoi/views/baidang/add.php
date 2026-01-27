@@ -132,93 +132,103 @@ require_once __DIR__ . '/../layout/sidebar.php';
             grid-column: span 1;
         }
     }
-</style>
+<?php
+require_once __DIR__ . '/../layout/header.php';
+require_once __DIR__ . '/../layout/sidebar.php';
+?>
 
-<div class="form-container">
-    <h2>➕ Thêm bài đăng mới</h2>
+<div class="main-content">
+    <div class="edit-container">
+        <a href="index.php?action=baidang" class="btn-back">⬅ Quay lại danh sách</a>
+        <h2>➕ Thêm bài đăng mới</h2>
 
-    <form method="post" enctype="multipart/form-data">
-        <div class="form-grid">
-
-            <div class="form-group">
-                <label>Loại bất động sản</label>
-                <select name="id_loai" required>
-                    <option value="">-- Chọn loại --</option>
-                    <option value="1">🏡 Nhà ở</option>
-                    <option value="2">🌱 Đất nền</option>
-                    <option value="3">🏢 Chung cư</option>
-                </select>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Tiêu đề bài đăng</label>
-                <input type="text" name="tieude" required>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Địa chỉ chính xác</label>
-                <input type="text" name="diachi" required>
-            </div>
-
-            <div class="form-group">
-                <label>Giá bán (VNĐ)</label>
-                <input type="number" name="gia" required>
-            </div>
-
-            <div class="form-group">
-                <label>Diện tích (m²)</label>
-                <input type="number" name="dientich" required>
-            </div>
-
-            <div class="form-group full-width">
-                <label>Mô tả chi tiết</label>
-                <textarea name="mota"></textarea>
-            </div>
-
-            <!-- MULTI IMAGE UPLOAD -->
-            <div class="form-group full-width">
-                <label>Hình ảnh bất động sản</label>
-                <div class="file-input-wrapper">
-                    <input 
-                        type="file" 
-                        name="images[]" 
-                        accept="image/*" 
-                        multiple 
-                        id="images"
-                    >
-                    <p style="font-size: 0.8rem; color: #888; margin-top: 5px;">
-                        Chọn nhiều ảnh (JPG, PNG) – mỗi ảnh tối đa 2MB
-                    </p>
+        <form action="index.php?action=baidang_add" method="post" enctype="multipart/form-data">
+            <div class="form-grid">
+                
+                <div class="form-group">
+                    <label>Loại bất động sản</label>
+                    <select name="id_loai" id="loai_bds" onchange="toggleFields()">
+                        <option value="1">🏠 Nhà ở / Chung cư</option>
+                        <option value="2">🌱 Đất nền</option>
+                    </select>
                 </div>
 
-                <div class="preview" id="preview"></div>
+                <div class="form-group full-width">
+                    <label>Tiêu đề bài đăng <span style="color:red">*</span></label>
+                    <input type="text" name="tieude" required placeholder="Ví dụ: Bán nhà 3 tầng mặt phố...">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Địa chỉ chi tiết <span style="color:red">*</span></label>
+                    <input type="text" name="diachi" required placeholder="Số nhà, đường, phường, quận...">
+                </div>
+
+                <div class="form-group">
+                    <label>Giá bán (VNĐ) <span style="color:red">*</span></label>
+                    <input type="number" name="gia" required min="0" placeholder="Nhập số tiền...">
+                </div>
+
+                <div class="form-group">
+                    <label>Diện tích (m²) <span style="color:red">*</span></label>
+                    <input type="number" name="dientich" required min="0" step="0.1" placeholder="Nhập diện tích...">
+                </div>
+
+                <div class="form-group" id="field-phong">
+                    <label>Số phòng ngủ</label>
+                    <input type="number" name="phong_ngu" min="0" value="0" placeholder="Số phòng...">
+                </div>
+
+                <div class="form-group" id="field-tang">
+                    <label>Số tầng / Tầng số</label>
+                    <input type="number" name="so_tang" min="0" value="0" placeholder="Số tầng...">
+                </div>
+
+                <div class="form-group">
+                    <label>Hướng nhà/đất</label>
+                    <select name="huong">
+                        <option value="">-- Chọn hướng --</option>
+                        <option value="Đông">Đông</option>
+                        <option value="Tây">Tây</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Bắc">Bắc</option>
+                        <option value="Đông Nam">Đông Nam</option>
+                        <option value="Đông Bắc">Đông Bắc</option>
+                        <option value="Tây Nam">Tây Nam</option>
+                        <option value="Tây Bắc">Tây Bắc</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Mô tả chi tiết</label>
+                    <textarea name="mota" rows="5" placeholder="Mô tả thêm về tiện ích, pháp lý..."></textarea>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Hình ảnh (Ảnh đại diện)</label>
+                    <div style="border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 8px;">
+                        <input type="file" name="img_1" required>
+                    </div>
+                </div>
+
             </div>
-
-        </div>
-
-        <div style="text-align: right;">
-            <button type="submit" class="btn-submit">💾 Lưu bài đăng</button>
-        </div>
-    </form>
+            <button type="submit" class="btn-update">🚀 ĐĂNG BÀI NGAY</button>
+        </form>
+    </div>
 </div>
 
 <script>
-document.getElementById('images').addEventListener('change', function () {
-    const preview = document.getElementById('preview');
-    preview.innerHTML = '';
+function toggleFields() {
+    var loai = document.getElementById("loai_bds").value;
+    var fieldPhong = document.getElementById("field-phong");
+    var fieldTang = document.getElementById("field-tang");
 
-    Array.from(this.files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-
-        const reader = new FileReader();
-        reader.onload = e => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            preview.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    });
-});
+    if (loai == "2") { // Nếu là Đất
+        fieldPhong.style.display = "none";
+        fieldTang.style.display = "none";
+    } else { // Nếu là Nhà
+        fieldPhong.style.display = "flex";
+        fieldTang.style.display = "flex";
+    }
+}
 </script>
 
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>

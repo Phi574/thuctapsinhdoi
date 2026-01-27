@@ -66,6 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'dientich' => $dientich,
         'mota'     => $mota,
         'img'      => $img_daidien
+        'phong_ngu' => $_POST['phong_ngu'] ?? 0,
+        'so_tang'   => $_POST['so_tang'] ?? 0,
+        'huong'     => $_POST['huong'] ?? ''
     ];
 
     $baidang_id = insert_nha($data);
@@ -79,4 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-require_once __DIR__ . '/../views/baidang/add.php';
+if (insert_baidang($data)) { // Lưu ý: Mình sẽ dùng hàm chung insert_baidang
+        echo "<script>alert('Thêm bài đăng thành công!'); window.location.href='index.php?action=baidang';</script>";
+    } else {
+        echo "<script>alert('Lỗi khi thêm bài đăng!');</script>";
+    }
+
+} else {
+    require_once __DIR__ . '/../views/baidang/add.php';
+}
+?>

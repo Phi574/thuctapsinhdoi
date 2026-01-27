@@ -1,44 +1,48 @@
 <?php
-
-require_once __DIR__ . '/../core/Auth.php';
 require_once __DIR__ . '/../models/BaiDangModel.php';
+require_once __DIR__ . '/../core/Auth.php';
+
 
 checkLogin();
 
-// ===== LẤY ID =====
+
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-if ($id <= 0) {
-    die('ID bài đăng không hợp lệ');
-}
 
-// ===== USER =====
-$user = $_SESSION['user'];
+if ($id > 0) {
 
-// ===== LẤY BÀI ĐĂNG =====
-$baidang = get_baidang_by_id($id);
-if (!$baidang) {
-    die('Bài đăng không tồn tại');
-}
+    $baidang = get_baidang_by_id($id);
 
-// ===== PHÂN QUYỀN =====
-if ($user['role'] !== 'admin' && $user['id'] != $baidang['user_id']) {
-    die('Bạn không có quyền xoá bài này');
-}
+    if ($baidang) {
 
-// ===== XOÁ ẢNH ĐẠI DIỆN =====
-if (!empty($baidang['img'])) {
-    $imgPath = __DIR__ . '/../public/uploads/' . $baidang['img'];
-    if (file_exists($imgPath)) {
-        unlink($imgPath);
+        if ($_SESSION['user']['role'] !== 'admin' && $_SESSION['user']['id'] != $baidang['user_id']) {
+            echo "<script>alert('Bạn không có quyền xóa bài này!'); window.location.href='index.php?action=baidang';</script>";
+            exit;
+        }
+
+
+        $img_name = $baidang['img_1'] ?? $baidang['img'] ?? '';
+        
+        if (!empty($img_name)) {
+
+            $file_path = __DIR__ . '/../public/uploads/' . $img_name;
+            
+
+            if (file_exists($file_path)) {
+                unlink($file_path); 
+            }
+        }
+
+        $result = delete_baidang($id);
+
+        if ($result) {
+            echo "<script>alert('Xóa bài đăng và ảnh thành công!'); window.location.href='index.php?action=baidang';</script>";
+        } else {
+            echo "<script>alert('Lỗi: Không thể xóa bài đăng trong CSDL.'); window.location.href='index.php?action=baidang';</script>";
+        }
+    } else {
+        echo "<script>alert('Bài đăng không tồn tại!'); window.location.href='index.php?action=baidang';</script>";
     }
+} else {
+    header('Location: index.php?action=baidang');
 }
-
-// ===== XOÁ GALLERY =====
-delete_baidang_images($id);
-
-// ===== XOÁ BÀI ĐĂNG =====
-delete_baidang($id, $baidang['loai']);
-
-// ===== QUAY LẠI DANH SÁCH =====
-header("Location: index.php?action=baidang");
-exit;
+?>

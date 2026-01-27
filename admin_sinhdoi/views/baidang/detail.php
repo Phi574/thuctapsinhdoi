@@ -209,52 +209,65 @@
 </style>
 
 <div class="detail-container">
-
-    <a href="index.php?action=baidang" class="back-btn">
-        ← Quay lại danh sách
-    </a>
+    <a href="index.php?action=baidang" class="back-btn">← Quay lại danh sách</a>
 
     <?php if (isset($nha) && is_array($nha)): ?>
-    <div class="post-main">
-        <img 
-            src="public/uploads/<?= htmlspecialchars($nha['img_1'] ?? '') ?>" 
-            onerror="this.src='public/uploads/demo.jpg'"
-            class="post-image"
-            alt="Hình ảnh bất động sản"
-        >
+        <?php
+            // ===== XỬ LÝ ẢNH (LOGIC CHUẨN) =====
+            $img_name = $nha['img_1'] ?? $nha['img'] ?? '';
+            // Đường dẫn hiển thị (Relative path từ index.php)
+            $img_src = "uploads/" . $img_name; 
+            // Đường dẫn kiểm tra file
+            $file_check = __DIR__ . "/../../public/uploads/" . $img_name;
+            
+            $image_url = (!empty($img_name) && file_exists($file_check)) 
+                         ? $img_src 
+                         : "assets/images/no-image.jpg";
+        ?>
 
-        <h2><?= htmlspecialchars($nha['tieude'] ?? '') ?></h2>
+        <div class="post-main">
+            <img src="<?= $image_url ?>" class="post-image" alt="Hình ảnh bài đăng" 
+                 onerror="this.src='assets/images/no-image.jpg'">
 
-        <div class="stats-grid">
-            <div class="stat-item">
-                <span>📍 Vị trí</span>
-                <b><?= htmlspecialchars($nha['diachi'] ?? '') ?></b>
-            </div>
+            <div class="post-content">
+                <div class="post-header">
+                    <div>
+                        <div class="badge <?= ($nha['loai'] == 'dat') ? 'badge-dat' : 'badge-nha' ?> mb-2" style="display:inline-block">
+                            <?= ($nha['loai'] == 'dat') ? '🌱 Đất nền' : '🏠 Nhà ở' ?>
+                        </div>
+                        <h1 class="post-title"><?= htmlspecialchars($nha['tieude']) ?></h1>
+                        <div class="post-meta">
+                            <span><i class="fa-solid fa-location-dot"></i> <?= htmlspecialchars($nha['diachi']) ?></span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="stat-item">
-                <span>📐 Diện tích</span>
-                <b><?= htmlspecialchars($nha['dientich'] ?? 0) ?> m²</b>
-            </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span>Diện tích</span>
+                        <b><?= $nha['dientich'] ?> m²</b>
+                    </div>
+                    <div class="stat-item">
+                        <span>Mức giá</span>
+                        <b class="stat-price"><?= number_format($nha['gia'], 0, ',', '.') ?> đ</b>
+                    </div>
+                    <div class="stat-item">
+                        <span>Trạng thái</span>
+                        <b><?= ($nha['trang_thai'] ?? 0) == 1 ? 'Đã cọc' : (($nha['trang_thai'] ?? 0) == 2 ? 'Đã bán' : 'Chưa bán') ?></b>
+                    </div>
+                </div>
 
-            <div class="stat-item">
-                <span>💰 Giá niêm yết</span>
-                <b class="stat-price">
-                    <?= number_format($nha['gia'] ?? 0, 0, ',', '.') ?> đ
-                </b>
+                <div class="description">
+                    <h4 class="description-title">Mô tả chi tiết</h4>
+                    <div class="description-content">
+                        <?= nl2br(htmlspecialchars($nha['mota'])) ?>
+                    </div>
+                </div>
             </div>
         </div>
-
-        <div class="description">
-            <h4 class="description-title">Mô tả chi tiết</h4>
-            <div class="description-content">
-                <?= nl2br(htmlspecialchars($nha['mota'] ?? '')) ?>
-            </div>
-        </div>
-    </div>
     <?php else: ?>
-        <p>Không tìm thấy dữ liệu bài đăng.</p>
+        <p class="text-center text-gray-500">Không tìm thấy dữ liệu bài đăng.</p>
     <?php endif; ?>
-
 </div>
 
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>
