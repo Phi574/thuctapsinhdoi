@@ -12,7 +12,6 @@ function renderTrangThai($value) {
 ?>
 
 <style>
-/* ... (Giữ nguyên CSS của bạn) ... */
 .container { padding: 20px; max-width: 1200px; margin: 0 auto; font-family: 'Segoe UI', sans-serif; }
 .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .btn-add { background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; }
@@ -48,25 +47,25 @@ function renderTrangThai($value) {
         <?php else: ?>
             <?php foreach ($list as $row): ?>
                 <?php
-                // SỬA LỖI QUAN TRỌNG: Dùng 'loai' thay vì 'loai_bds'
                 $isNha = ($row['loai'] ?? '') === 'nha';
 
-                // Tạo link đúng Controller
                 $link_view = $isNha ? "index.php?action=nha_detail&id={$row['id']}" : "index.php?action=dat_detail&id={$row['id']}";
                 $link_edit = $isNha ? "index.php?action=nha_edit&id={$row['id']}"   : "index.php?action=dat_edit&id={$row['id']}";
 
-                // Xử lý ảnh
-                $img_name = $row['img'] ?? ''; 
-                $img_src = "public/uploads/" . $img_name;
+                $img_name = $row['img_1'] ?? $row['img'] ?? ''; 
+
+                $img_src = "uploads/" . $img_name;
+                
                 $file_check = __DIR__ . "/../../public/uploads/" . $img_name;
                 
                 $image_url = (!empty($img_name) && file_exists($file_check)) 
                              ? $img_src 
-                             : "public/assets/images/no-image.jpg";
+                             : "assets/images/demo.jpg"; 
                 ?>
                 
                 <div class="card">
-                    <img src="<?= $image_url ?>" alt="Ảnh bài đăng" onerror="this.src='public/assets/images/no-image.jpg'">
+                    <img src="<?= $image_url ?>" alt="Ảnh bài đăng" 
+                         onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
                     
                     <div class="card-content">
                         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px">
@@ -83,7 +82,7 @@ function renderTrangThai($value) {
 
                     <div class="actions">
                         <a href="<?= $link_view ?>" class="btn-view">Xem</a>
-                        <?php if ($_SESSION['user']['role'] === 'admin' || $_SESSION['user']['id'] == ($row['user_id'] ?? 0)): ?>
+                        <?php if (isset($_SESSION['user']) && ($_SESSION['user']['role'] === 'admin' || $_SESSION['user']['id'] == ($row['user_id'] ?? 0))): ?>
                             <a href="<?= $link_edit ?>" class="btn-edit">Sửa</a>
                             <a href="index.php?action=baidang_delete&id=<?= $row['id'] ?>" class="btn-delete" onclick="return confirm('Xoá bài này?')">Xoá</a>
                         <?php endif; ?>

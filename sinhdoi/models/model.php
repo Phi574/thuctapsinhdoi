@@ -92,35 +92,35 @@ class model
     /* ================= CHI TIẾT SẢN PHẨM ================= */
 
     public function get_product_detail($id, $loai)
-{
-    $id = (int)$id;
+    {
+        $id = (int)$id;
 
-    if ($loai === 'dat') {
-        $sql = "
-            SELECT *
-            FROM batdongsan_dat
-            JOIN users ON batdongsan_dat.user_id = users.id
-            WHERE batdongsan_dat.id_dat = $id
-        ";
-    } elseif ($loai === 'nha') {
-        $sql = "
-            SELECT *
-            FROM batdongsa_nha
-            JOIN users ON batdongsa_nha.user_id = users.id
-            WHERE batdongsa_nha.id_nha = $id
-        ";
-    } else {
+        if ($loai === 'dat') {
+            $sql = "
+                SELECT *
+                FROM batdongsan_dat
+                LEFT JOIN users ON batdongsan_dat.user_id = users.id  -- Sửa JOIN thành LEFT JOIN
+                WHERE batdongsan_dat.id_dat = $id
+            ";
+        } elseif ($loai === 'nha') {
+            $sql = "
+                SELECT *
+                FROM batdongsa_nha
+                LEFT JOIN users ON batdongsa_nha.user_id = users.id   -- Sửa JOIN thành LEFT JOIN
+                WHERE batdongsa_nha.id_nha = $id
+            ";
+        } else {
+            return null;
+        }
+
+        $result = $this->connect->query($sql);
+
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+
         return null;
     }
-
-    $result = $this->connect->query($sql);
-
-    if ($result && $result->num_rows > 0) {
-        return $result->fetch_assoc();
-    }
-
-    return null;
-}
 
 }
 ?>

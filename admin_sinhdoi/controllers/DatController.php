@@ -12,16 +12,17 @@ class DatController
         checkLogin();
 
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-        if ($id <= 0) {
-            die('ID không hợp lệ');
+        if ($id <= 0) die('ID không hợp lệ');
+
+        // Lấy dữ liệu (Dùng chung hàm get_baidang_by_id)
+        $nha = get_baidang_by_id($id); // <--- Đặt tên biến là $nha
+
+        // Kiểm tra đúng loại Đất
+        if (!$nha || $nha['loai'] !== 'dat') {
+            die('Bài đăng không tồn tại hoặc không phải đất nền');
         }
 
-        // LẤY ĐÚNG 1 BÀI
-        $dat = get_baidang_by_id($id);
-        if (!$dat || $dat['loai'] !== 'dat') {
-            die('Bài đăng không tồn tại');
-        }
-
+        // Gọi View chung (View này dùng biến $nha nên giờ sẽ hoạt động)
         require_once __DIR__ . '/../views/baidang/detail.php';
     }
 
@@ -33,18 +34,16 @@ class DatController
         checkLogin();
 
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-        if ($id <= 0) {
-            die('ID không hợp lệ');
-        }
+        if ($id <= 0) die('ID không hợp lệ');
 
-        // LẤY ĐÚNG 1 BÀI
-        $dat = get_baidang_by_id($id);
-        if (!$dat || $dat['loai'] !== 'dat') {
+        $nha = get_baidang_by_id($id); // <--- Đặt tên biến là $nha
+        
+        if (!$nha || $nha['loai'] !== 'dat') {
             die('Bài đăng không tồn tại');
         }
 
-        // KIỂM TRA QUYỀN
-        checkOwner($dat['user_id']);
+        // Kiểm tra quyền sở hữu
+        checkOwner($nha['user_id']);
 
         require_once __DIR__ . '/../views/baidang/edit.php';
     }
