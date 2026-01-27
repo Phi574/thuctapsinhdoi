@@ -84,19 +84,17 @@ $id_loai = $nha['id_loai'];
                         <?php if (!empty($nha['img_1'])): ?>
                             <div class="current-img-wrapper">
                                 <small>Ảnh hiện tại</small><br>
-                                <img src="/admin_sinhdoi/public/uploads/<?= $nha['img_1'] ?>">
+                                <img src="public/uploads/<?= htmlspecialchars($nha['img_1']) ?>" 
+                                onerror="this.src='public/uploads/no-image.jpg'">
                             </div>
-                        <?php endif; ?>
-
-                        <div>
-                            <small>Tải ảnh mới (nếu muốn)</small>
-                            <input type="file" name="img_1">
+                            <?php endif; ?>
+                            <div>
+                                <small>Tải ảnh mới (nếu muốn)</small>
+                                <input type="file" name="img_1">
+                            </div>
                         </div>
                     </div>
                 </div>
-
-            </div>
-
             <button type="submit" class="btn-update">💾 CẬP NHẬT THAY ĐỔI</button>
         </form>
     </div>

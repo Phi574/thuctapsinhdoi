@@ -142,18 +142,29 @@ function renderTrangThai($value)
                     ? "index.php?action=nha_edit&id={$row['id']}"
                     : "index.php?action=dat_edit&id={$row['id']}";
 
-                // ===== FIX LỖI IMG_1 =====
-                $image = (!empty($row['img_1']))
-                    ? $row['img_1']
-                    : 'no-image.jpg';
+                // ===== FIX LOGIC ẢNH (QUAN TRỌNG: Sửa img_1 thành img) =====
+                // Vì trong Model get_all_baidang() dùng "SELECT img_1 AS img ..."
+                // nên kết quả trả về key là "img" chứ không phải "img_1"
+                $img_name = $row['img'] ?? ''; 
+                
+                // Đường dẫn dùng để hiển thị (URL)
+                $img_src = "public/uploads/" . $img_name;
+                
+                // Đường dẫn vật lý để kiểm tra file tồn tại (Dùng __DIR__)
+                $file_check = __DIR__ . "/../../public/uploads/" . $img_name;
+
+                if (!empty($img_name) && file_exists($file_check)) {
+                    $image_url = $img_src;
+                } else {
+                    // Ảnh mặc định nếu lỗi hoặc chưa có ảnh
+                    $image_url = "https://via.placeholder.com/300x200?text=No+Image"; 
+                }
                 ?>
-
+                
                 <div class="card">
-                    <img src="/admin_sinhdoi/public/uploads/<?= htmlspecialchars($image) ?>"
-                         alt="Ảnh bài đăng">
-
+                    <img src="<?= $image_url ?>" alt="Ảnh bài đăng" onerror="this.src='https://via.placeholder.com/300x200?text=Error'">
+                    
                     <div class="card-content">
-
                         <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px">
                             <span class="badge <?= $isNha ? 'badge-nha' : 'badge-dat' ?>">
                                 <?= $isNha ? '🏠 Nhà' : '🌱 Đất' ?>
@@ -184,9 +195,7 @@ function renderTrangThai($value)
                             </a>
                         <?php endif; ?>
                     </div>
-                </div>
-
-            <?php endforeach; ?>
+                </div> <?php endforeach; ?>
         <?php endif; ?>
     </div>
 </div>

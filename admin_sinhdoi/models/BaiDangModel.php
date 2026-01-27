@@ -87,17 +87,43 @@ function get_all_baidang() {
     return mysqli_fetch_all($rs, MYSQLI_ASSOC);
 }
 
-function get_baidang_by_id($id) {
+/* =====================================================
+   LẤY BÀI ĐĂNG THEO ID (SỬA LẠI CHO KHỚP VIEW)
+===================================================== */
+function get_baidang_by_id($id)
+{
     global $conn;
     $id = (int)$id;
     if ($id <= 0) return null;
 
-    $sql = "SELECT id_nha AS id, user_id, tieude_nha AS title, mota_nha AS mo_ta, gia_nha AS gia, dientich_nha AS dien_tich, dia_chi_nha AS dia_chi, img_1, 'nha' AS loai, loai_nha 
-            FROM batdongsa_nha WHERE id_nha = $id
-            UNION ALL
-            SELECT id_dat AS id, user_id, tieude_dat AS title, mota_dat AS mo_ta, gia_dat AS gia, dientich_dat AS dien_tich, diachi_dat AS dia_chi, img_1, 'dat' AS loai, 'Đất nền' AS loai_nha 
-            FROM batdongsan_dat WHERE id_dat = $id
-            LIMIT 1";
+    $sql = "
+        SELECT 
+            id_nha AS id, user_id, 
+            tieude_nha AS tieude,  -- Sửa title -> tieude
+            mota_nha AS mota,      -- Sửa mo_ta -> mota
+            gia_nha AS gia, 
+            dientich_nha AS dientich, -- Sửa dien_tich -> dientich
+            dia_chi_nha AS diachi,    -- Sửa dia_chi -> diachi
+            img_1, 
+            'nha' AS loai, 
+            loai_nha 
+        FROM batdongsa_nha WHERE id_nha = $id
+        
+        UNION ALL
+        
+        SELECT 
+            id_dat AS id, user_id, 
+            tieude_dat AS tieude, 
+            mota_dat AS mota, 
+            gia_dat AS gia, 
+            dientich_dat AS dientich, 
+            diachi_dat AS diachi, 
+            img_1, 
+            'dat' AS loai, 
+            'Đất nền' AS loai_nha 
+        FROM batdongsan_dat WHERE id_dat = $id
+        LIMIT 1
+    ";
 
     $result = mysqli_query($conn, $sql);
     if (!$result || mysqli_num_rows($result) === 0) return null;

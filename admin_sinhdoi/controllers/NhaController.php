@@ -18,7 +18,7 @@ class NhaController
             die('Bài đăng không tồn tại');
         }
 
-        require_once __DIR__ . '/../views/nha/detail.php';
+        require_once __DIR__ . '/../views/baidang/detail.php';
     }
 
     public function edit()

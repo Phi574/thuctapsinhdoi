@@ -214,30 +214,32 @@
         ← Quay lại danh sách
     </a>
 
+    <?php if (isset($nha) && is_array($nha)): ?>
     <div class="post-main">
         <img 
-            src="/admin_sinhdoi/public/uploads/<?= ($baidang['img_1'] ?? 'no-image.jpg') ?>" 
+            src="public/uploads/<?= htmlspecialchars($nha['img_1'] ?? '') ?>" 
+            onerror="this.src='public/uploads/no-image.jpg'"
             class="post-image"
             alt="Hình ảnh bất động sản"
         >
 
-        <h2><?= ($baidang['title'] ?? '') ?></h2>
+        <h2><?= htmlspecialchars($nha['tieude'] ?? '') ?></h2>
 
         <div class="stats-grid">
             <div class="stat-item">
                 <span>📍 Vị trí</span>
-                <b><?= ($baidang['dia_chi'] ?? '') ?></b>
+                <b><?= htmlspecialchars($nha['diachi'] ?? '') ?></b>
             </div>
 
             <div class="stat-item">
                 <span>📐 Diện tích</span>
-                <b><?= ($baidang['dien_tich'] ?? 0) ?> m²</b>
+                <b><?= htmlspecialchars($nha['dientich'] ?? 0) ?> m²</b>
             </div>
 
             <div class="stat-item">
                 <span>💰 Giá niêm yết</span>
                 <b class="stat-price">
-                    <?= number_format($baidang['gia'] ?? 0, 0, ',', '.') ?> đ
+                    <?= number_format($nha['gia'] ?? 0, 0, ',', '.') ?> đ
                 </b>
             </div>
         </div>
@@ -245,12 +247,13 @@
         <div class="description">
             <h4 class="description-title">Mô tả chi tiết</h4>
             <div class="description-content">
-                <?= nl2br(htmlspecialchars($baidang['mo_ta'] ?? '')) ?>
+                <?= nl2br(htmlspecialchars($nha['mota'] ?? '')) ?>
             </div>
         </div>
     </div>
-
-    
+    <?php else: ?>
+        <p>Không tìm thấy dữ liệu bài đăng.</p>
+    <?php endif; ?>
 
 </div>
 
