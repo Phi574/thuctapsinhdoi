@@ -1,47 +1,47 @@
 <?php
+
 require_once __DIR__ . '/../models/user_model.php';
-require_once __DIR__ . '/../core/Flash.php'; // nếu bạn có set_flash
 
 $action = $_GET['action'] ?? 'login';
 
-/*
-|--------------------------------------------------------------------------
-| LOGIN
-|--------------------------------------------------------------------------
-*/
+/* ================= ĐĂNG NHẬP ================= */
 if ($action === 'login' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $email    = trim($_POST['email'] ?? '');
-    $password = md5($_POST['password'] ?? '');
+    $username = trim($_POST['username'] ?? ''); 
+    $password = $_POST['password'] ?? '';
 
-    $user = user_login($email);
 
-    if ($user && $user['password'] === $password) {
+    $user = user_login($username);
 
-        $_SESSION['user'] = $user;
 
-        // Điều hướng theo role
-        if ($user['role'] === 'admin') {
-            header("Location: index.php?action=dashboard");
-        } else {
-            header("Location: index.php?action=dashboard");
+    $login_success = false;
+
+    if ($user) {
+        if (password_verify($password, $user['password'])) {
+            $login_success = true;
+        } 
+        elseif ($user['password'] === md5($password)) {
+            $login_success = true;
         }
-        exit;
+        elseif ($user['password'] === $password) {
+            $login_success = true;
+        }
+    }
 
+    if ($login_success) {
+        $_SESSION['user'] = $user;
+        header("Location: index.php?action=dashboard");
+        exit;
     } else {
-        set_flash('error', 'Sai tài khoản hoặc mật khẩu');
-        header("Location: index.php?action=login");
+        header("Location: index.php?action=login&error=1");
         exit;
     }
 }
 
-/*
-|--------------------------------------------------------------------------
-| LOGOUT
-|--------------------------------------------------------------------------
-*/
+/* ================= ĐĂNG XUẤT ================= */
 if ($action === 'logout') {
     session_destroy();
     header("Location: index.php?action=login");
     exit;
 }
+?>sss

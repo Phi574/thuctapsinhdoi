@@ -76,7 +76,7 @@
     <?php endif; ?>
 
     <form method="post" action="index.php?action=login">
-        <input type="text" name="email" placeholder="Email hoặc username" required>
+        <input type="text" name="username" placeholder="Tên đăng nhập hoặc Email" ... >
         <input type="password" name="password" placeholder="Mật khẩu" required>
 
         <button type="submit">Đăng nhập</button>
