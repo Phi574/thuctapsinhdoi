@@ -42,7 +42,7 @@ class controller
                 break;
 
             /* =========================================
-               XỬ LÝ GỬI TƯ VẤN (TỪ TRANG CHI TIẾT)
+               XỬ LÝ GỬI TƯ VẤN (Đã nâng cấp AJAX)
                ========================================= */
             case 'gui_tuvan':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -55,7 +55,21 @@ class controller
                         'user_nhan_id' => $_POST['user_nhan_id'] ?? 0
                     ];
 
-                    if ($this->model->insert_tuvan($data)) {
+                    $result = $this->model->insert_tuvan($data);
+
+                    // 1. NẾU LÀ GỬI TỪ POPUP (AJAX) -> Trả về JSON để đóng form
+                    if (isset($_POST['is_ajax']) && $_POST['is_ajax'] == 1) {
+                        header('Content-Type: application/json');
+                        if ($result) {
+                            echo json_encode(['status' => 'success', 'message' => 'Gửi thông tin thành công! Chúng tôi sẽ gọi lại ngay.']);
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Có lỗi xảy ra, vui lòng thử lại!']);
+                        }
+                        exit; // Quan trọng: Dừng code tại đây
+                    }
+
+                    // 2. NẾU LÀ GỬI TỪ TRANG CHI TIẾT (Form thường) -> Hiện Alert
+                    if ($result) {
                         echo "<script>alert('Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ lại sớm.'); window.history.back();</script>";
                     } else {
                         echo "<script>alert('Lỗi gửi đi. Vui lòng thử lại!'); window.history.back();</script>";

@@ -359,7 +359,8 @@
             <h3 class="text-2xl font-bold uppercase">Nhận tư vấn ngay</h3>
             <p class="text-orange-100 text-sm opacity-80">Chúng tôi sẽ liên hệ lại sau 5 phút</p>
         </div>
-        <form id="form-tuvan" method="POST" action="/admin_sinhdoi/public/index.php?action=gui_tuvan" class="p-8 space-y-4">
+        <form id="form-tuvan" method="POST" action="index.php?action=gui_tuvan" class="p-8 space-y-4">
+            <input type="hidden" name="is_ajax" value="1">
             <input type="text" name="ten_khach" required placeholder="Họ và tên" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-[#ff5722]">
             <input type="text" name="phone" required placeholder="Số điện thoại" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-[#ff5722]">
             <input type="text" name="email" required placeholder="Email" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:border-[#ff5722]">
