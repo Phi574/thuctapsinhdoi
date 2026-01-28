@@ -1,30 +1,38 @@
 <?php
+// FILE: admin_sinhdoi/models/SettingModel.php
 require_once __DIR__ . '/../config/database.php';
 
-function get_setting()
-{
+function get_setting() {
     global $conn;
-    $sql = "SELECT * FROM settings LIMIT 1";
-    $rs = mysqli_query($conn, $sql);
-    return mysqli_fetch_assoc($rs);
+    // Luôn lấy dòng ID = 1
+    $sql = "SELECT * FROM cauhinh WHERE id = 1 LIMIT 1";
+    $result = mysqli_query($conn, $sql);
+    return mysqli_fetch_assoc($result);
 }
 
-function update_setting($data)
-{
+function update_setting($data) {
     global $conn;
+    
+    $title   = mysqli_real_escape_string($conn, $data['site_title']);
+    $hotline = mysqli_real_escape_string($conn, $data['hotline']);
+    $email   = mysqli_real_escape_string($conn, $data['email']);
+    $address = mysqli_real_escape_string($conn, $data['address']);
+    $fb      = mysqli_real_escape_string($conn, $data['facebook']);
+    $zalo    = mysqli_real_escape_string($conn, $data['zalo']);
+    $mota    = mysqli_real_escape_string($conn, $data['mota_footer']);
+    $logo    = mysqli_real_escape_string($conn, $data['logo']);
 
-    $sql = "UPDATE settings SET
-        logo = '{$data['logo']}',
-        site_name = '{$data['site_name']}',
-        site_color = '{$data['site_color']}',
-        hotline = '{$data['hotline']}',
-        email = '{$data['email']}',
-        address = '{$data['address']}',
-        seo_title = '{$data['seo_title']}',
-        seo_description = '{$data['seo_description']}',
-        enable_tuvan = {$data['enable_tuvan']}
-        WHERE id = 1
-    ";
+    $sql = "UPDATE cauhinh SET 
+            site_title = '$title',
+            hotline = '$hotline',
+            email = '$email',
+            address = '$address',
+            facebook = '$fb',
+            zalo = '$zalo',
+            mota_footer = '$mota',
+            logo = '$logo'
+            WHERE id = 1";
 
     return mysqli_query($conn, $sql);
 }
+?>

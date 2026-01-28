@@ -121,6 +121,21 @@ class model
 
         return null;
     }
+    public function insert_tuvan($data)
+    {
+        $ten      = $this->connect->real_escape_string($data['ten_khach']);
+        $sdt      = $this->connect->real_escape_string($data['phone']);
+        $email    = $this->connect->real_escape_string($data['email']);
+        $noidung  = $this->connect->real_escape_string($data['noi_dung']);
+        
+        $id_bai   = (int)($data['bai_dang_id'] ?? 0);
+        $id_nhan  = (int)($data['user_nhan_id'] ?? 0); 
+        $loai     = ($id_bai > 0) ? 2 : 1; 
+        $sql = "INSERT INTO tuvan (ten_khach, phone, email, noi_dung, loai, bai_dang_id, user_nhan_id, trang_thai) 
+                VALUES ('$ten', '$sdt', '$email', '$noidung', $loai, $id_bai, $id_nhan, 0)";
+        
+        return $this->connect->query($sql);
+    }
 
 }
 ?>

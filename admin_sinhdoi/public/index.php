@@ -153,6 +153,10 @@ case 'dashboard':
         require_once '../controllers/tuvan_list.php';
         break;
 
+    case 'setting':
+        require_once '../controllers/setting.php';
+        break;
+
     default:
         echo '404';
         break;

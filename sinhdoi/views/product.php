@@ -238,7 +238,7 @@
                             <div class="relative flex justify-center text-[10px] font-black uppercase"><span class="bg-white px-4 text-slate-400 tracking-widest">Hoặc để lại lời nhắn</span></div>
                         </div>
 
-                        <form method="POST" action="/admin_sinhdoi/public/index.php?action=gui_tuvan" class="space-y-4">
+                        <form method="POST" action="index.php?action=gui_tuvan" class="space-y-4">
                             <input type="hidden" name="bai_dang_id" value="<?= $product['id_nha'] ?? $product['id_dat'] ?>">
                             <input type="hidden" name="user_nhan_id" value="<?= $product['user_id'] ?>">
                             

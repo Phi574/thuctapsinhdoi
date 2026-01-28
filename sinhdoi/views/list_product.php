@@ -10,6 +10,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:ital,wght@1,700;1,900&display=swap" rel="stylesheet">
 
     <style>
+        .text-orange-main { color: #ff5722; }
+        .bg-orange-main { background-color: #ff5722; }
+        .bg-hero-dark {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1449824913935-59a10b8d2000?auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+        }
         :root {
             --primary: #ff5722;
             --dark: #0f172a;
@@ -78,30 +86,31 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="text-slate-900">
+<body class="bg-white font-sans text-gray-800">
 
-<header class="glass-header text-white sticky top-0 z-50">
-    <div class="container mx-auto px-6 h-24 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
-            <div class="w-12 h-12 bg-[#ff5722] rounded-2xl flex items-center justify-center rotate-3 hover:rotate-0 transition-transform shadow-lg shadow-orange-500/20">
-                <i class="fa-solid fa-house-lock text-white text-2xl"></i>
+    <header class="bg-[#1a1a1a] text-white sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto px-6 h-20 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <div class="w-10 h-10 bg-orange-main rounded-xl flex items-center justify-center">
+                <i class="fa-solid fa-house-chimney text-white text-xl"></i>
             </div>
-            <span class="brand-font text-2xl tracking-tighter uppercase">
-                SINHDOI<span class="text-[#ff5722]">LAND</span>
+            <span class="font-bold text-2xl tracking-tighter uppercase">
+                SINHDOI<span class="text-orange-main">LAND</span>
             </span>
         </div>
 
-        <nav class="hidden md:flex space-x-10 text-[11px] uppercase font-extrabold tracking-[0.2em]">
-            <a href="index.php?action=trangchu" class="nav-link">Home</a>
-            <a href="index.php?action=list_product" class="nav-link active text-[#ff5722]">Properties</a>
-            <a href="index.php?action=introduce" class="nav-link">Story</a>
-            <a href="index.php?action=contact" class="nav-link">Contact</a>
-        </nav>
+        <ul class="hidden md:flex space-x-8 text-sm uppercase font-bold tracking-wide">
+            <li><a href="index.php?action=trangchu" class="nav-link">Trang Chủ</a></li>
+            <li><a href="index.php?action=list_product" class="nav-link text-orange-main active">Bất Động Sản</a></li>
+            <li><a href="index.php?action=introduce" class="nav-link">Giới Thiệu</a></li>
+            <li><a href="index.php?action=contact" class="nav-link">Liên Hệ</a></li>
+        </ul>
 
-        <a href="tel:0123456789" class="hidden md:flex items-center gap-3 bg-white/10 hover:bg-[#ff5722] px-6 py-3 rounded-2xl transition-all border border-white/10 group">
-            <i class="fa-solid fa-phone text-[#ff5722] group-hover:text-white"></i>
-            <span class="font-bold text-sm">0123.456.789</span>
-        </a>
+        <div class="hidden md:block">
+            <a href="tel:0123456789" class="bg-orange-main px-5 py-2 rounded-full font-bold text-sm hover:bg-orange-600 transition">
+                <i class="fa-solid fa-phone mr-2"></i> 0123.456.789
+            </a>
+        </div>
     </div>
 </header>
 
@@ -128,14 +137,14 @@
         <aside class="lg:w-1/4">
             <div class="sticky top-32 space-y-10">
                 <div>
-                    <h3 class="brand-font text-xs uppercase tracking-[0.3em] text-slate-400 mb-6">Filter by category</h3>
+                    <h3 class="brand-font text-xs uppercase tracking-[0.3em] text-slate-400 mb-6">Lọc theo danh mục</h3>
                     <div class="space-y-3">
                         <label class="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-[#ff5722] cursor-pointer transition group">
-                            <span class="font-bold text-slate-600 group-hover:text-slate-900">Residential</span>
+                            <span class="font-bold text-slate-600 group-hover:text-slate-900">Khu dân cư</span>
                             <input type="checkbox" class="w-5 h-5 accent-[#ff5722]">
                         </label>
                         <label class="flex items-center justify-between p-4 rounded-2xl border border-slate-200 hover:border-[#ff5722] cursor-pointer transition group">
-                            <span class="font-bold text-slate-600 group-hover:text-slate-900">Land Plots</span>
+                            <span class="font-bold text-slate-600 group-hover:text-slate-900">Đất nền</span>
                             <input type="checkbox" class="w-5 h-5 accent-[#ff5722]">
                         </label>
                     </div>
@@ -147,8 +156,8 @@
             <div class="flex justify-between items-center mb-10">
                 <p class="text-slate-400 font-medium">Hiển thị <span class="text-slate-900 font-extrabold"><?= count($list_product) ?></span> kết quả</p>
                 <select class="bg-transparent font-bold text-xs uppercase tracking-widest outline-none border-b-2 border-slate-200 focus:border-[#ff5722] pb-1 cursor-pointer">
-                    <option>Sort by: Newest</option>
-                    <option>Price: Low to High</option>
+                    <option>Sắp xếp theo: Mới nhất</option>
+                    <option>Giá: Thấp đến Cao</option>
                 </select>
             </div>
 
@@ -203,22 +212,49 @@
     </div>
 </main>
 
-<footer class="bg-slate-900 text-slate-400 py-20 mt-20">
-    <div class="container mx-auto px-6 text-center">
-        <div class="flex justify-center items-center space-x-3 mb-10">
-            <div class="w-10 h-10 bg-[#ff5722] rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-house-lock text-white text-xl"></i>
+<footer class="bg-[#1a1a1a] text-white pt-16 pb-8">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+            <div>
+                <h3 class="font-bold mb-6 text-lg">Nha Thầu Hưng</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Chúng tôi chuyên cung cấp giải pháp thiết kế nội thất hiện đại cho ngôi nhà của bạn.</p>
             </div>
-            <span class="brand-font text-xl text-white tracking-tighter uppercase">SINHDOI<span class="text-[#ff5722]">LAND</span></span>
+            <div>
+                <h4 class="font-bold mb-6 text-lg">Sản Phẩm</h4>
+                <ul class="text-gray-400 text-sm space-y-3">
+                    <li><a href="#" class="hover:text-orange-main transition">Phòng Khách</a></li>
+                    <li><a href="#" class="hover:text-orange-main transition">Phòng Ngủ</a></li>
+                    <li><a href="#" class="hover:text-orange-main transition">Phòng Ăn</a></li>
+                    <li><a href="#" class="hover:text-orange-main transition">Phòng Tắm</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-lg">Dịch Vụ</h4>
+                <ul class="text-gray-400 text-sm space-y-3">
+                    <li><a href="#" class="hover:text-orange-main transition">Tư Vấn Miễn Phí</a></li>
+                    <li><a href="#" class="hover:text-orange-main transition">Thiết Kế</a></li>
+                    <li><a href="#" class="hover:text-orange-main transition">Thi Công</a></li>
+                    <li><a href="#" class="hover:text-orange-main transition">Bảo Hành</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-lg">Liên Hệ</h4>
+                <ul class="text-gray-400 text-sm space-y-3">
+                    <li><i class="fa fa-phone w-5"></i> 0123456789</li>
+                    <li><i class="fa fa-envelope w-5"></i> contact@nhathauhung.com</li>
+                    <li><i class="fa fa-map-marker-alt w-5"></i> Hà Nội, Việt Nam</li>
+                </ul>
+            </div>
         </div>
-        <p class="max-w-md mx-auto text-sm leading-loose mb-10">
-            Đơn vị cung cấp giải pháp bất động sản số hóa hàng đầu. Minh bạch - Chuyên nghiệp - Hiệu quả.
-        </p>
-        <div class="border-t border-white/5 pt-10 text-[10px] uppercase tracking-[0.4em]">
-            &copy; 2026 SINHDOILAND Ecosystem
+        <div class="border-t border-gray-800 mt-16 pt-8 container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center text-gray-500 text-xs gap-4">
+                <p>© 2024 Nha Thầu Hưng. Tất cả quyền được bảo lưu.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="hover:text-white transition">Chính sách riêng tư</a>
+                    <a href="#" class="hover:text-white transition">Điều khoản sử dụng</a>
+                </div>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {

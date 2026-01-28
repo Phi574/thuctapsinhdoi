@@ -127,7 +127,7 @@
             <div class="lg:w-2/3 bg-white p-8 rounded-xl shadow-sm border border-gray-100">
                 <h2 class="text-2xl font-bold text-gray-800 mb-8">Gửi Lời Nhắn Cho Chúng Tôi</h2>
                 
-                <form action="index.php?act=contact_submit" method="POST" class="space-y-6">
+                <form action="index.php?action=gui_lien_he" method="POST" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-2">
                             <label class="text-sm font-semibold text-gray-600">Họ và Tên *</label>
