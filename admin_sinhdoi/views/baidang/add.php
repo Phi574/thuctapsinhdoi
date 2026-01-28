@@ -137,10 +137,34 @@ require_once __DIR__ . '/../layout/header.php';
 require_once __DIR__ . '/../layout/sidebar.php';
 ?>
 
+<style>
+    /* CSS Cục bộ cho form này */
+    .form-container { max-width: 800px; margin: 20px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); font-family: 'Segoe UI', sans-serif; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .full-width { grid-column: span 2; }
+    .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+    .form-group label { fontWeight: 600; margin-bottom: 8px; color: #555; font-size: 0.95rem; }
+    .form-group input, .form-group select, .form-group textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; background-color: #fdfdfd; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #3498db; outline: none; box-shadow: 0 0 0 3px rgba(52,152,219,0.1); background-color: #fff; }
+    
+    /* Style cho nút bấm */
+    .btn-submit {
+        background: #3498db; color: white; padding: 14px 28px; border: none; border-radius: 8px;
+        font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.3s;
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; width: 100%;
+    }
+    .btn-submit:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(52,152,219,0.3); }
+
+    @media (max-width: 600px) {
+        .form-grid { grid-template-columns: 1fr; }
+        .full-width { grid-column: span 1; }
+    }
+</style>
+
 <div class="main-content">
     <div class="edit-container">
-        <a href="index.php?action=baidang" class="btn-back">⬅ Quay lại danh sách</a>
-        <h2>➕ Thêm bài đăng mới</h2>
+        <a href="index.php?action=baidang" class="btn-back" style="display:inline-block; margin-bottom:15px; text-decoration:none; color:#666;">⬅ Quay lại danh sách</a>
+        <h2 style="margin-bottom:20px; color:#2c3e50; border-bottom:2px solid #eee; padding-bottom:10px;">➕ Thêm bài đăng mới</h2>
 
         <form action="index.php?action=baidang_add" method="post" enctype="multipart/form-data">
             <div class="form-grid">
@@ -148,8 +172,9 @@ require_once __DIR__ . '/../layout/sidebar.php';
                 <div class="form-group">
                     <label>Loại bất động sản</label>
                     <select name="id_loai" id="loai_bds" onchange="toggleFields()">
-                        <option value="1">🏠 Nhà ở / Chung cư</option>
+                        <option value="1">🏠 Nhà ở</option>
                         <option value="2">🌱 Đất nền</option>
+                        <option value="3">🏢 Chung cư</option>
                     </select>
                 </div>
 
@@ -197,6 +222,7 @@ require_once __DIR__ . '/../layout/sidebar.php';
                         <option value="Tây Bắc">Tây Bắc</option>
                     </select>
                 </div>
+
                 <div class="form-group full-width">
                     <label>Mô tả chi tiết</label>
                     <textarea name="mota" rows="5" placeholder="Mô tả thêm về tiện ích, pháp lý..."></textarea>
@@ -210,21 +236,28 @@ require_once __DIR__ . '/../layout/sidebar.php';
                 </div>
 
             </div>
-            <button type="submit" class="btn-update">🚀 ĐĂNG BÀI NGAY</button>
+            <button type="submit" class="btn-submit">🚀 ĐĂNG BÀI NGAY</button>
         </form>
     </div>
 </div>
 
 <script>
+// Script chạy ngay khi trang tải xong để set trạng thái ban đầu
+document.addEventListener("DOMContentLoaded", function() {
+    toggleFields(); 
+});
+
 function toggleFields() {
     var loai = document.getElementById("loai_bds").value;
     var fieldPhong = document.getElementById("field-phong");
     var fieldTang = document.getElementById("field-tang");
 
-    if (loai == "2") { // Nếu là Đất
+    // Nếu là Đất (value = 2) thì ẩn
+    if (loai == "2") { 
         fieldPhong.style.display = "none";
         fieldTang.style.display = "none";
-    } else { // Nếu là Nhà
+    } else { 
+        // Còn lại hiện
         fieldPhong.style.display = "flex";
         fieldTang.style.display = "flex";
     }

@@ -6,13 +6,13 @@ if (session_status() === PHP_SESSION_NONE) {
 /* ===============================
    BẮT BUỘC ĐĂNG NHẬP
 ================================ */
-function checkLogin()
-{
+function checkLogin() {
     if (!isset($_SESSION['user'])) {
         header("Location: index.php?action=login");
         exit;
     }
 }
+
 
 /* ===============================
    CHỈ ADMIN
