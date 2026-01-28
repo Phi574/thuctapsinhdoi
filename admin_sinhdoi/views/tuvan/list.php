@@ -96,102 +96,162 @@ require_once __DIR__ . '/../layout/sidebar.php';
     }
 </style>
 
-<div class="tuvan-container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2>📞 Danh sách yêu cầu tư vấn</h2>
-        <span style="color: #666;">Tổng số: <strong><?= count($ds_tuvan) ?></strong> bản ghi</span>
+<?php
+// FILE: admin_sinhdoi/views/tuvan/list.php
+require_once __DIR__ . '/../layout/header.php';
+require_once __DIR__ . '/../layout/sidebar.php';
+?>
+
+<div class="main-content">
+    
+    <div class="filter-bar glass-card" style="margin-bottom: 20px; padding: 20px;">
+        <form action="index.php" method="GET" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <input type="hidden" name="action" value="tuvan">
+            
+            <div style="flex:1;">
+                <input type="text" name="keyword" value="<?= htmlspecialchars($keyword) ?>" 
+                       placeholder="🔍 Tìm tên, số điện thoại, nội dung..." 
+                       style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px;">
+            </div>
+
+            <select name="status" style="padding:10px; border:1px solid #ddd; border-radius:8px;">
+                <option value="-1">-- Tất cả trạng thái --</option>
+                <option value="0" <?= ($status_filter === 0) ? 'selected' : '' ?>>✨ Mới gửi</option>
+                <option value="1" <?= ($status_filter === 1) ? 'selected' : '' ?>>📞 Đã liên hệ</option>
+                <option value="2" <?= ($status_filter === 2) ? 'selected' : '' ?>>💰 Đã chốt/Cọc</option>
+            </select>
+
+            <button type="submit" class="btn-primary" style="padding:10px 20px;">Lọc dữ liệu</button>
+            <a href="index.php?action=tuvan" class="btn-secondary" style="padding:10px 20px; text-decoration:none; background:#eee; color:#333; border-radius:8px;">Reset</a>
+        </form>
     </div>
 
-    <div class="table-responsive">
+    <h3 style="color:#2c3e50; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
+        <i class="fa-solid fa-bolt text-warning"></i> Yêu cầu cần xử lý (<?= count($list_active) ?>)
+    </h3>
+    
+    <div class="table-container">
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
+                    <th>#ID</th>
                     <th>Khách hàng</th>
                     <th>Nội dung tư vấn</th>
-                    <th>Người phụ trách</th>
                     <th>Phân loại</th>
+                    <th>Người phụ trách</th>
                     <th>Trạng thái</th>
-                    <th>Thời gian</th>
-                    <th width="250">Thao tác nhanh</th>
+                    <th>Thao tác nhanh</th>
                 </tr>
             </thead>
             <tbody>
-                <?php if (empty($ds_tuvan)): ?>
-                <tr>
-                    <td colspan="8" style="text-align: center; padding: 40px; color: #999;">
-                        Hiện chưa có yêu cầu tư vấn nào từ khách hàng.
-                    </td>
-                </tr>
+                <?php if (empty($list_active)): ?>
+                    <tr><td colspan="7" style="text-align:center; padding:20px;">Không có yêu cầu nào đang chờ xử lý.</td></tr>
                 <?php else: ?>
-                    <?php $count = 0; foreach ($ds_tuvan as $tv): ?>
-                    <tr>
-                        <td><?= ++$count ?></td>
-                        <td>
-                            <strong><?= htmlspecialchars($tv['ten_khach'] ?? '') ?></strong>
-                            <span class="info-sub">📱 <?= htmlspecialchars($tv['phone'] ?? '') ?></span>
-                        </td>
-                        <td>
-                            <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?= htmlspecialchars($tv['noi_dung'] ?? '') ?>">
-                                <?= htmlspecialchars($tv['noi_dung'] ?? '') ?>
-                            </div>
-                        </td>
-                        <td>
-                            <span style="font-weight: 500; color: #2c3e50;">
-                                <?= htmlspecialchars($tv['ten_user'] ?? 'Hệ thống') ?>
-                            </span>
-                        </td>
-                        <td>
-                            <small style="background: #eee; padding: 2px 6px; border-radius: 4px;">
-                                <?= ($tv['loai'] ?? 1) == 1 ? '🌐 Toàn site' : '📄 Bài đăng' ?>
-                            </small>
-                        </td>
-                        <td>
-                            <?php
-                            $st = $tv['trang_thai'] ?? 0;
-                            if ($st == 0) echo '<span class="badge badge-pending">⏳ Chưa gọi</span>';
-                            elseif ($st == 1) echo '<span class="badge badge-calling">📞 Đã gọi</span>';
-                            else echo '<span class="badge badge-success">✅ Đã chốt</span>';
-                            ?>
-                        </td>
-                        <td>
-                            <span class="info-sub"><?= date('H:i d/m/Y', strtotime($tv['created_at'] ?? 'now')) ?></span>
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                <a href="index.php?action=tuvan_detail&id=<?= $tv['id'] ?>" class="btn-action btn-view">Xem</a>
-
-                                <?php 
-                                $user = $_SESSION['user'];
-                                // Quyền Admin hoặc người được giao bài đăng mới được sửa
-                                if ($user['role'] == 'admin' || ($tv['user_nhan_id'] ?? 0) == $user['id']): 
-                                ?>
-                                    <form method="post" action="index.php?action=tuvan_update" style="margin:0;">
-                                        <input type="hidden" name="id" value="<?= $tv['id'] ?>">
-                                        <input type="hidden" name="trang_thai" value="1">
-                                        <button type="submit" class="btn-action btn-call">Đã gọi</button>
-                                    </form>
-
-                                    <form method="post" action="index.php?action=tuvan_update" style="margin:0;">
-                                        <input type="hidden" name="id" value="<?= $tv['id'] ?>">
-                                        <input type="hidden" name="trang_thai" value="2">
-                                        <button type="submit" class="btn-action btn-done">đã cọc</button>
-                                    </form>
-
-                                    <form method="post" action="index.php?action=tuvan_update" style="margin:0;">
-                                        <input type="hidden" name="id" value="<?= $tv['id'] ?>">
-                                        <input type="hidden" name="trang_thai" value="3">
-                                        <button type="submit" class="btn-action btn-done">Chốt</button>
-                                    </form>
+                    <?php foreach ($list_active as $row): ?>
+                        <tr>
+                            <td>#<?= $row['id'] ?></td>
+                            <td>
+                                <b><?= htmlspecialchars($row['ten_khach']) ?></b><br>
+                                <a href="tel:<?= $row['phone'] ?>" style="color:#e67e22; font-weight:bold;"><?= $row['phone'] ?></a>
+                                <div style="font-size:11px; color:#888;"><?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></div>
+                            </td>
+                            <td>
+                                <div style="max-width:250px; white-space:pre-wrap; font-size:13px;"><?= htmlspecialchars($row['noi_dung']) ?></div>
+                            </td>
+                            <td>
+                                <?php if($row['loai'] == 2): ?>
+                                    <span class="badge bg-info">Bài đăng #<?= $row['bai_dang_id'] ?></span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Tư vấn chung</span>
                                 <?php endif; ?>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td>
+                                <?= !empty($row['ten_user']) ? $row['ten_user'] : '<span style="color:#999;">Chưa gán</span>' ?>
+                            </td>
+                            <td>
+                                <?php 
+                                    if ($row['trang_thai'] == 0) echo '<span class="badge bg-danger">Mới</span>';
+                                    elseif ($row['trang_thai'] == 1) echo '<span class="badge bg-warning">Đã gọi</span>';
+                                ?>
+                            </td>
+                            <td>
+                                <div style="display:flex; gap:5px;">
+                                    <a href="tel:<?= $row['phone'] ?>" class="btn-icon bg-success" title="Gọi ngay"><i class="fa fa-phone"></i></a>
+                                    
+                                    <?php if($row['trang_thai'] == 0): ?>
+                                        <a href="index.php?action=tuvan_update&id=<?= $row['id'] ?>&status=1" class="btn-icon bg-warning" title="Đánh dấu đã gọi" onclick="return confirm('Đã liên hệ với khách này?')"><i class="fa fa-check"></i></a>
+                                    <?php endif; ?>
+
+                                    <a href="index.php?action=tuvan_update&id=<?= $row['id'] ?>&status=2" class="btn-icon bg-primary" title="Xác nhận Đã Cọc/Chốt" onclick="return confirm('Xác nhận khách đã chốt/cọc thành công? Yêu cầu này sẽ chuyển xuống mục lịch sử.')"><i class="fa fa-dollar-sign"></i></a>
+
+                                    <a href="index.php?action=tuvan_delete&id=<?= $row['id'] ?>" class="btn-icon bg-danger" onclick="return confirm('Bạn chắc chắn muốn xóa vĩnh viễn?')" title="Xóa"><i class="fa fa-trash"></i></a>
+                                </div>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
+
+    <details style="margin-top: 30px; background: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">
+        <summary style="padding: 15px; cursor: pointer; font-weight: bold; color: #555;">
+            📁 Lịch sử / Đã chốt (<?= count($list_done) ?>) <span style="font-weight:normal; font-size:12px; margin-left:10px;">(Bấm để mở rộng/thu gọn)</span>
+        </summary>
+        
+        <div class="table-container" style="border-top: 1px solid #ddd;">
+            <table style="background: #fdfdfd;">
+                <thead>
+                    <tr style="background: #eee;">
+                        <th>#ID</th>
+                        <th>Khách hàng</th>
+                        <th>Kết quả</th>
+                        <th>Thời gian gửi</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (empty($list_done)): ?>
+                        <tr><td colspan="5" style="text-align:center;">Chưa có dữ liệu lịch sử.</td></tr>
+                    <?php else: ?>
+                        <?php foreach ($list_done as $row): ?>
+                            <tr style="opacity: 0.8;">
+                                <td>#<?= $row['id'] ?></td>
+                                <td><?= htmlspecialchars($row['ten_khach']) ?> - <?= $row['phone'] ?></td>
+                                <td>
+                                    <?php 
+                                        if ($row['trang_thai'] == 2) echo '<span class="badge bg-success">💰 Đã Cọc / Chốt</span>';
+                                        elseif ($row['trang_thai'] == 3) echo '<span class="badge bg-dark">Đã hủy</span>';
+                                    ?>
+                                </td>
+                                <td><?= date('d/m/Y H:i', strtotime($row['created_at'])) ?></td>
+                                <td>
+                                    <a href="index.php?action=tuvan_update&id=<?= $row['id'] ?>&status=0" class="btn-icon bg-secondary" title="Khôi phục lại" onclick="return confirm('Khôi phục lại trạng thái Mới?')"><i class="fa fa-undo"></i></a>
+                                    <a href="index.php?action=tuvan_delete&id=<?= $row['id'] ?>" class="btn-icon bg-danger" onclick="return confirm('Xóa vĩnh viễn?')" title="Xóa"><i class="fa fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </details>
+
 </div>
+
+<style>
+    /* CSS Bổ sung cho đẹp */
+    .btn-icon { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border-radius: 5px; color: white; text-decoration: none; transition: 0.2s; }
+    .btn-icon:hover { opacity: 0.8; transform: translateY(-2px); color: white; }
+    .badge { padding: 4px 8px; border-radius: 4px; color: white; font-size: 11px; font-weight: bold; }
+    .bg-danger { background: #e74c3c; }
+    .bg-warning { background: #f39c12; }
+    .bg-success { background: #27ae60; }
+    .bg-info { background: #3498db; }
+    .bg-secondary { background: #95a5a6; }
+    .bg-primary { background: #2980b9; }
+    .bg-dark { background: #34495e; }
+    .text-warning { color: #f39c12; }
+</style>
 
 <?php require_once __DIR__ . '/../layout/footer.php'; ?>

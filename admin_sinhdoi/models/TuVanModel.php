@@ -1,5 +1,5 @@
 <?php
-// models/TuVanModel.php
+// FILE: admin_sinhdoi/models/TuVanModel.php
 require_once __DIR__ . '/../config/database.php';
 
 /* ================= THÊM TƯ VẤN ================= */
@@ -18,41 +18,42 @@ function insert_tuvan($data) {
     return mysqli_query($conn, $sql);
 }
 
-/* ================= ADMIN: LẤY TẤT CẢ (Đã sửa lỗi hiển thị) ================= */
-function get_all_tuvan() {
+/* ================= LỌC VÀ TÌM KIẾM NÂNG CAO (NEW) ================= */
+function get_tuvan_advanced($keyword = '', $status = -1, $user_id = 0, $sort = 'DESC') {
     global $conn;
-    // Dùng LEFT JOIN để lấy cả những tin nhắn chung (user_nhan_id = 0)
-    $sql = "SELECT tuvan.*, users.name AS ten_user, users.phone AS phone_user, users.email AS email_user
-            FROM tuvan
-            LEFT JOIN users ON tuvan.user_nhan_id = users.id
-            ORDER BY tuvan.created_at DESC";
-            
-    $result = mysqli_query($conn, $sql);
-    $data = [];
-    if ($result) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
+    
+    // Câu lệnh cơ bản
+    $sql = "SELECT tuvan.*, users.name AS ten_user 
+            FROM tuvan 
+            LEFT JOIN users ON tuvan.user_nhan_id = users.id 
+            WHERE 1=1";
+
+    // 1. Lọc theo User (Nếu không phải Admin thì chỉ xem của mình)
+    if ($user_id > 0) {
+        $sql .= " AND tuvan.user_nhan_id = $user_id";
     }
-    return $data;
+
+    // 2. Lọc theo Trạng thái (Nếu chọn)
+    if ($status != -1) {
+        $sql .= " AND tuvan.trang_thai = $status";
+    }
+
+    // 3. Tìm kiếm từ khóa (Tên, SĐT, Nội dung)
+    if (!empty($keyword)) {
+        $keyword = mysqli_real_escape_string($conn, $keyword);
+        $sql .= " AND (tuvan.ten_khach LIKE '%$keyword%' 
+                       OR tuvan.phone LIKE '%$keyword%' 
+                       OR tuvan.noi_dung LIKE '%$keyword%')";
+    }
+
+    // 4. Sắp xếp
+    $sql .= " ORDER BY tuvan.created_at $sort";
+
+    $result = mysqli_query($conn, $sql);
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 
-/* ================= USER: LẤY THEO ID ================= */
-function get_tuvan_by_user($user_id) {
-    global $conn;
-    $user_id = (int)$user_id;
-    $sql = "SELECT * FROM tuvan WHERE user_nhan_id = $user_id ORDER BY created_at DESC";
-    $result = mysqli_query($conn, $sql);
-    $data = [];
-    if ($result) {
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
-    }
-    return $data;
-}
-
-/* ================= CHI TIẾT & CẬP NHẬT ================= */
+/* ================= CÁC HÀM CŨ (Giữ lại để tương thích) ================= */
 function get_tuvan_by_id($id) {
     global $conn;
     $id = (int)$id;

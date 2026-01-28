@@ -1,38 +1,19 @@
 <?php
+// FILE: admin_sinhdoi/controllers/tuvan_update.php
 require_once __DIR__ . '/../core/Auth.php';
-require_once __DIR__ . '/../core/Flash.php';
 require_once __DIR__ . '/../models/TuVanModel.php';
 
-checkLogin(); // ❗ KHÔNG check_Admin nữa
+checkLogin();
 
-// LẤY TỪ POST
-$id         = isset($_POST['id']) ? (int)$_POST['id'] : 0;
-$trang_thai = isset($_POST['trang_thai']) ? (int)$_POST['trang_thai'] : -1;
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$status = isset($_GET['status']) ? (int)$_GET['status'] : 0;
 
-// VALIDATE
-if ($id <= 0 || !in_array($trang_thai, [0, 1, 2])) {
-    set_flash('error', 'Dữ liệu không hợp lệ');
-    header("Location: index.php?action=tuvan_list");
-    exit;
+if ($id > 0) {
+    update_trang_thai_tuvan($id, $status);
+    
+    $msg = ($status == 2) ? "Đã chốt khách hàng thành công!" : "Cập nhật trạng thái thành công!";
+    echo "<script>alert('$msg'); window.location.href='index.php?action=tuvan';</script>";
+} else {
+    header("Location: index.php?action=tuvan");
 }
-
-// LẤY TƯ VẤN
-$tuvan = get_tuvan_by_id($id);
-if (!$tuvan) {
-    die('Tư vấn không tồn tại');
-}
-
-// CHECK QUYỀN
-if (
-    $_SESSION['user']['role'] != 'admin' &&
-    $_SESSION['user']['id'] != $tuvan['user_nhan_id']
-) {
-    die('Bạn không có quyền cập nhật tư vấn này');
-}
-
-// UPDATE
-update_trang_thai_tuvan($id, $trang_thai);
-
-set_flash('success', 'Cập nhật trạng thái thành công');
-header("Location: index.php?action=tuvan_list");
-exit;
+?>

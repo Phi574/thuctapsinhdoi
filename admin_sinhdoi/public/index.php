@@ -99,6 +99,10 @@ case 'dat_edit':
     case 'tuvan_update':
         require_once '../controllers/tuvan_update.php';
         break;
+    
+    case 'tuvan_delete': // Thêm dòng này
+        require_once '../controllers/tuvan_delete.php';
+        break;
 
     case 'dashboard':
         require_once '../controllers/dashboard.php';
@@ -160,5 +164,6 @@ case 'dashboard':
     default:
         echo '404';
         break;
+    
 
 }
