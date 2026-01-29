@@ -1,24 +1,23 @@
 <?php
-session_start();
-
 require_once __DIR__ . '/../core/Auth.php';
 require_once __DIR__ . '/../models/BaiDangModel.php';
-
-checkLogin(); 
+checkLogin();
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-if ($id <= 0) {
-    die('ID không hợp lệ');
+$action = $_GET['action'] ?? '';
+
+$baidang = null;
+
+// Lấy dữ liệu cũ để điền vào form
+if ($action == 'nha_edit') {
+    $baidang = get_nha_by_id($id);
+} elseif ($action == 'dat_edit') {
+    $baidang = get_dat_by_id($id);
 }
 
-$nha = get_nha_by_id($id);
-if (!$nha) {
-    die('Bài đăng không tồn tại');
-}
-
-$user = $_SESSION['user'];
-if ($user['role'] !== 'admin' && $user['id'] != $nha['user_id']) {
-    die('Bạn không có quyền sửa bài này');
+if (!$baidang) {
+    echo "<script>alert('Không tìm thấy bài đăng để sửa!'); window.history.back();</script>";
+    exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -40,6 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'mota'     => trim($_POST['mota'] ?? ''),
         'img'      => $img_name
     ];
+
+    $loai_can_sua = ($action == 'nha_edit') ? 'nha' : 'dat';
+update_baidang($id, $data, $loai_can_sua);
 
     update_nha($id, $data);
 

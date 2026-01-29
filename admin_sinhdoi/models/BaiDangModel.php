@@ -94,14 +94,10 @@ function get_baidang_by_id($id) {
 /* =====================================================
    4. CẬP NHẬT & XÓA (UPDATE & DELETE)
 ===================================================== */
-function update_baidang($id, $data) {
+function update_baidang($id, $data, $loai_table) { 
     global $conn;
     $id = (int)$id;
     
-    // Lấy thông tin cũ
-    $old_data = get_baidang_by_id($id);
-    if (!$old_data) return false;
-
     $tieude   = mysqli_real_escape_string($conn, $data['tieude']);
     $diachi   = mysqli_real_escape_string($conn, $data['diachi']);
     $gia      = (float)$data['gia'];
@@ -109,10 +105,11 @@ function update_baidang($id, $data) {
     $mota     = mysqli_real_escape_string($conn, $data['mota']);
     $img      = mysqli_real_escape_string($conn, $data['img']);
     $huong    = mysqli_real_escape_string($conn, $data['huong'] ?? '');
-    $so_phong = (int)($data['phong_ngu'] ?? 0);
-    $so_tang  = (int)($data['so_tang'] ?? 0);
 
-    if ($old_data['loai'] == 'nha') {
+    if ($loai_table == 'nha') {
+        $so_phong = (int)($data['phong_ngu'] ?? 0);
+        $so_tang  = (int)($data['so_tang'] ?? 0);
+        
         $sql = "UPDATE batdongsa_nha SET 
                 tieude_nha='$tieude', dia_chi_nha='$diachi', 
                 gia_nha=$gia, dientich_nha=$dientich, 
@@ -120,6 +117,7 @@ function update_baidang($id, $data) {
                 so_phong=$so_phong, so_tang=$so_tang, huong='$huong'
                 WHERE id_nha=$id";
     } else {
+        // Là Đất
         $sql = "UPDATE batdongsan_dat SET 
                 tieude_dat='$tieude', diachi_dat='$diachi', 
                 gia_dat=$gia, dientich_dat=$dientich, 
@@ -135,10 +133,36 @@ function delete_baidang($id) {
     global $conn;
     $id = (int)$id;
     
-    // Xóa trong cả 2 bảng cho chắc ăn
-    mysqli_query($conn, "DELETE FROM batdongsa_nha WHERE id_nha = $id");
-    mysqli_query($conn, "DELETE FROM batdongsan_dat WHERE id_dat = $id");
+    // 1. Kiểm tra xem ID này thuộc bảng nào
+    $check_nha = mysqli_query($conn, "SELECT id_nha FROM batdongsa_nha WHERE id_nha = $id");
+    if (mysqli_num_rows($check_nha) > 0) {
+        // Nếu là Nhà -> Chỉ xóa trong bảng Nhà
+        return mysqli_query($conn, "DELETE FROM batdongsa_nha WHERE id_nha = $id");
+    }
     
-    return mysqli_affected_rows($conn) > 0;
+    $check_dat = mysqli_query($conn, "SELECT id_dat FROM batdongsan_dat WHERE id_dat = $id");
+    if (mysqli_num_rows($check_dat) > 0) {
+        // Nếu là Đất -> Chỉ xóa trong bảng Đất
+        return mysqli_query($conn, "DELETE FROM batdongsan_dat WHERE id_dat = $id");
+    }
+
+    return false; // Không tìm thấy ID để xóa
+}
+// Lấy chi tiết CHÍNH XÁC là Đất
+function get_dat_by_id($id) {
+    global $conn;
+    $id = (int)$id;
+    $sql = "SELECT *, 'dat' as loai FROM batdongsan_dat WHERE id_dat = $id";
+    $rs = mysqli_query($conn, $sql);
+    return mysqli_fetch_assoc($rs);
+}
+
+// Lấy chi tiết CHÍNH XÁC là Nhà
+function get_nha_by_id($id) {
+    global $conn;
+    $id = (int)$id;
+    $sql = "SELECT *, 'nha' as loai FROM batdongsa_nha WHERE id_nha = $id";
+    $rs = mysqli_query($conn, $sql);
+    return mysqli_fetch_assoc($rs);
 }
 ?>
